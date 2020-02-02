@@ -1,6 +1,6 @@
 {
   "name": "nexe-natives",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Support modules with natives within NEXE builds",
   "main": "index.js",
   "dependencies": {},
