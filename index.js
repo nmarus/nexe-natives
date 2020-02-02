@@ -6,21 +6,30 @@ const requireNative = require('./lib/require-native');
 const defaultLocalPath = path.join(process.env.HOME, '.nexe_natives');
 
 function getPathToNodeModules(mainPath) {
+  if (path.resolve(mainPath).endsWith('node_modules')) {
+    return mainPath;
+  }
+
   const parent = path.dirname(mainPath);
 
   // if reached root of fs
   if (parent === mainPath) {
-    throw Error('could not find node_modules directory');
-  }
-
-  if (parent.endsWith('node_modules')) {
-    return parent;
+    throw Error('could not find node_modules');
   }
 
   return getPathToNodeModules(parent);
 }
 
 function getPathToPackageJson(mainPath) {
+  try {
+    const list = fs.readdirSync(mainPath);
+    if (list.includes('package.json')) {
+      return path.join(mainPath, 'package.json');
+    }
+  } catch (err) {
+    // ignore
+  }
+
   const parent = path.dirname(mainPath);
 
   // if reached root of fs
@@ -28,14 +37,7 @@ function getPathToPackageJson(mainPath) {
     throw Error('could not find package.json');
   }
 
-  const packageJsonPath = path.join(parent, 'package.json');
-
-  try {
-    fs.accessSync(packageJsonPath, fs.constants.F_OK);
-    return packageJsonPath;
-  } catch (err) {
-    return getPathToPackageJson(parent);
-  }
+  return getPathToPackageJson(parent);
 }
 
 module.exports = (mainPath, opts = {}) => {
