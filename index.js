@@ -51,11 +51,15 @@ module.exports = (mainPath, opts = {}) => {
 
   if (removeOnExit) {
     process.on('exit', () => {
-      const moduleDir = path.join(externalModulesDir, moduleName);
-      fs.rmdirSync(moduleDir, { recursive: true });
-      const list = fs.readdirSync(externalModulesDir);
-      if (list.length === 0) {
-        fs.rmdirSync(externalModulesDir, { recursive: true });
+      try {
+        const moduleDir = path.join(externalModulesDir, moduleName);
+        fs.rmdirSync(moduleDir, { recursive: true });
+        const list = fs.readdirSync(externalModulesDir);
+        if (list.length === 0) {
+          fs.rmdirSync(externalModulesDir, { recursive: true });
+        }
+      } catch (err) {
+        // ignore error when deleting
       }
     });
   }
