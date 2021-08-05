@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const requireNative = require('./lib/require-native');
 
-const defaultLocalPath = path.join(process.env.HOME, '.nexe_natives');
+const defaultLocalPath = path.join(process.platform == 'win32' ? process.env.USERPROFILE : process.env.HOME, '.nexe_natives');
 
 function getPathToNodeModules(mainPath) {
   if (path.resolve(mainPath).endsWith('node_modules')) {
